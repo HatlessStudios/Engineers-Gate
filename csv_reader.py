@@ -1,26 +1,31 @@
 import csv
 
-with open("data/coin_data.csv", newline='') as csvfile:
-    data = []
-    coin_dict = {}
-    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+def readCSV():
 
-    #Read each row in the csv
-    for row in spamreader:
+    with open("data/coin_data.csv", newline='') as csvfile:
+        data = []
+        coin_dict = {}
+        spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
 
-        #Convert row into a list of values and add to the dataset
-        line = row[0].split(",")
-        data.append(line)
+        #Read each row in the csv
+        for row in spamreader:
 
-        #Increment or add the coin to the coin dictionary
-        if line[1] not in coin_dict:
-            coin_dict[line[1]] = 1
-        else:
-            coin_dict[line[1]] += 1
+            #Convert row into a list of values and add to the dataset
+            line = row[0].split(",")
+            data.append(line)
 
-    #Sort the data by coin name
-    data.sort(key=lambda x: x[1])
+            #Increment or add the coin to the coin dictionary
+            if line[1] not in coin_dict:
+                coin_dict[line[1]] = 1
+            else:
+                coin_dict[line[1]] += 1
 
+        #Sort the data by coin name
+        data.sort(key=lambda x: x[1])
+
+    return coin_dict, data
+
+def filterData(coin_dict, data):
     coin_dict_over_200 = {k: v for k, v in coin_dict.items() if v >= 200}
     #Filter out coins which are usable from the dict
     coin_dict = {k: v for k, v in coin_dict.items() if v < 200}
@@ -45,6 +50,11 @@ with open("data/coin_data.csv", newline='') as csvfile:
         for i in range(half, len(data_by_coin[coin])):
             training_data.append(data_by_coin[coin][i])
 
+    return test_data, training_data
+
+if __name__ == "__main__":
+    coin_dict, data = readCSV()
+    test_data, training_data = filterData(coin_dict, data)
 
 
 
