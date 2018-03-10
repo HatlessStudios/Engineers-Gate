@@ -59,11 +59,6 @@ def filter_data(coin_dict, data, k, coin):
     return k_set
 
 
-if __name__ == "__main__":
-    coin_dict, data = read_csv()
-    k_set = filter_data(coin_dict, data, 10, "bitcoin")
-
-    print(k_set)
 
 
 
