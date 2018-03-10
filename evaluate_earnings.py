@@ -1,11 +1,15 @@
-from model import get_score
+from model import predict_model, test_model
 
 
-def evaluate_currency(cur_name, data):
+def evaluate_currency(model, steps, data, s_d, ):
 
-    if type(cur_name) == list:
-        for currency in cur_name:
-            print(currency, get_score(currency, data))
+    """
+    Calculates the likely revenue per stock, accompanied by a failure rate and standard deviation.
+    :param model: The RNN
+    :param history:
+    :param steps:
+    :param data:
+    :return:
+    """
 
-    else:
-        print(cur_name, get_score(cur_name, data))
+    cur_mult = predict_model(model, data, steps)
