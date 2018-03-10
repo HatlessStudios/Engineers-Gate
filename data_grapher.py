@@ -67,11 +67,11 @@ def graph_coin(data_by_coin, coin):
     plt.title("Open and Close for " + coin)
     plt.plot(open_data, 'r', close_data, 'b')
 
+if __name__ == "__main__":
+    coin_dict, data = csv_reader.read_csv()
+    data_by_coin = split_data_coins(coin_dict, data)
 
-coin_dict, data = csv_reader.read_csv()
-data_by_coin = split_data_coins(coin_dict, data)
-
-coin = input("Enter the coin you want data on: ")
-graph_coin(data_by_coin, coin)
+    coin = input("Enter the coin you want data on: ")
+    graph_coin(data_by_coin, coin)
 
 

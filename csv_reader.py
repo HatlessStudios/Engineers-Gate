@@ -1,4 +1,5 @@
 import csv
+import data_grapher
 
 
 def read_csv():
@@ -34,7 +35,7 @@ def read_csv():
     return coin_dict, data
 
 
-def filter_data(coin_dict, data):
+def filter_data(coin_dict, data, k, coin):
 
     """
     Parses the data, removing currencies with less than 200 available data,
@@ -45,36 +46,24 @@ def filter_data(coin_dict, data):
     :return: A batch of test data, and training data.
     """
 
-    coin_dict_over_200 = {k: v for k, v in coin_dict.items() if v >= 200}
-    # Filter out coins which are usable from the dict
-    coin_dict = {k: v for k, v in coin_dict.items() if v < 200}
+    data_by_coin = data_grapher.split_data_coins(coin_dict, data)
 
-    # Filter out unusable coins from the data
-    for coin in coin_dict.keys():
-        data = list(filter(lambda a: a[1] != coin, data))
+    segment_size = len(data_by_coin[coin]) // k
+    k_set = []
 
-    data_by_coin = {}
-    test_data = []
-    training_data = []
+    for i in range(0, len(data_by_coin[coin]), segment_size):
+        k_set.append(data_by_coin[coin][i:i + segment_size])
 
-    # Split dataset in half
-    for coin in coin_dict_over_200.keys():
-        data_by_coin[coin] = list(filter(lambda a: a[1] == coin, data))
 
-        half = len(data_by_coin[coin]) // 2
 
-        for i in range(half):
-            test_data.append(data_by_coin[coin][i])
-
-        for i in range(half, len(data_by_coin[coin])):
-            training_data.append(data_by_coin[coin][i])
-
-    return test_data, training_data
+    return k_set
 
 
 if __name__ == "__main__":
     coin_dict, data = read_csv()
-    test_data, training_data = filter_data(coin_dict, data)
+    k_set = filter_data(coin_dict, data, 10, "bitcoin")
+
+    print(k_set)
 
 
 
