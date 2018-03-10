@@ -21,6 +21,7 @@ with open("data/coin_data.csv", newline='') as csvfile:
     #Sort the data by coin name
     data.sort(key=lambda x: x[1])
 
+    coin_dict_over_200 = {k: v for k, v in coin_dict.items() if v >= 200}
     #Filter out coins which are usable from the dict
     coin_dict = {k: v for k, v in coin_dict.items() if v < 200}
 
@@ -28,6 +29,22 @@ with open("data/coin_data.csv", newline='') as csvfile:
     for coin in coin_dict.keys():
         data = list(filter(lambda a: a[1] != coin, data))
 
-    print(data)
-    print(coin_dict)
+    data_by_coin = {}
+    test_data = []
+    training_data = []
+
+    #Split dataset in half
+    for coin in coin_dict_over_200.keys():
+        data_by_coin[coin] = list(filter(lambda a: a[1] == coin, data))
+
+        half = len(data_by_coin[coin]) // 2
+
+        for i in range(half):
+            test_data.append(data_by_coin[coin][i])
+
+        for i in range(half, len(data_by_coin[coin])):
+            training_data.append(data_by_coin[coin][i])
+
+
+
 
