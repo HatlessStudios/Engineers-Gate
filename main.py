@@ -49,9 +49,17 @@ def show_graphs():
 
 
 def model_currency(k=10):
+    """
+    Creates a neural network to model a currency.
+    :param k: The degree of cross-validation to be performed.
+    :return:
+    """
 
     coin_dict, data = cr.read_csv()
-    data = cr.split_data_coins(coin_dict, data)[list(coin_dict.keys())[0]]
+
+    coin = select_currency(coin_dict)
+
+    data = cr.split_data_coins(coin_dict, data)[coin]
     model_weights = []
     model_errors = []
 
@@ -99,6 +107,11 @@ def to_expected(s):
 
 
 def select_currency(data_dict):
+    """
+    Get user input for which currency to view.
+    :param data_dict: A dictionary of currencies.
+    :return: The currency that's been selected.
+    """
 
     print("Which currency would you like?")
 
