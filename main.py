@@ -85,13 +85,32 @@ def model_currency(k=10):
 
         proportion = (1/error)/sum_error
         model_weights[idx] = proportion * model_weights[idx]
-        # model_weights[idx] = np.vectorize(lambda x: proportion * x)(model_weights[idx])
 
     true_weights = sum(model_weights)
     true_model = m.create_model(4, [8, 8, 2])
     m.set_weights(true_model, true_weights)
-    result = m.test_model(true_model, np.array([s[:-1] for s in split_data]), np.array([to_expected(s) for s in split_data]))
-    pass
+
+    while True:
+        print("For how long would you like to invest?")
+        steps = input("Choice:   ")
+        try:
+            steps = int(steps)
+            assert steps > 0
+        except ValueError or AssertionError:
+            print("That was not a valid amount of time.")
+        break
+
+    revenue = m.predict_model(true_model, np.array([[split_data[-1][-1]]]), steps)
+    error = m.test_model(true_model, np.array([s[:-1] for s in split_data]), np.array([to_expected(s) for s in split_data]))
+    multiply = [1, 1]
+    for r in revenue:
+        multiply[0] *= r[0][0]
+        multiply[1] *= r[0][1]
+    print("Expected revenue: {}  with error percentage at: {}%".format(multiply, error[0]*100))
+
+    return revenue, error
+
+
 
 
 def inv_g(x):
@@ -129,7 +148,7 @@ def select_currency(data_dict):
             curr_choice = int(curr_choice)
             assert curr_choice in range(1, len(data_dict.keys()) + 1)
 
-        except TypeError or AssertionError:
+        except ValueError or AssertionError:
             print("You did not enter a currency number.")
             continue
         break
