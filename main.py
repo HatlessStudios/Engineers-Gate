@@ -155,6 +155,10 @@ def select_currency(data_dict):
 
     return num_to_key[curr_choice][1]
 
+def test_for_overfit():
+
+    for i in range(2, 10):
+        model_currency(i)
 
 if __name__ == "__main__":
     menu()
