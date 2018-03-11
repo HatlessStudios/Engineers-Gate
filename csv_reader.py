@@ -13,20 +13,16 @@ def read_csv():
 
         data = []
         coin_dict = {}
-        spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+        reader = csv.reader(csvfile, delimiter=',', quotechar='"')
 
         # Read each row in the csv
-        for row in spamreader:
-
-            # Convert row into a list of values and add to the dataset
-            line = row[0].split(",")
-            data.append(line)
-
+        for row in reader:
+            data.append(row)
             # Increment or add the coin to the coin dictionary
-            if line[1] not in coin_dict:
-                coin_dict[line[1]] = 1
+            if row[1] not in coin_dict:
+                coin_dict[row[1]] = 1
             else:
-                coin_dict[line[1]] += 1
+                coin_dict[row[1]] += 1
 
         # Sort the data by coin name
         data.sort(key=lambda x: x[1])
@@ -48,28 +44,16 @@ def filter_data(coin_dict, data, k, coin):
     """
 
     data_by_coin = split_data_coins(coin_dict, data)
-
     segment_size = len(data_by_coin[coin]) // k
-    k_set = []
-
-    for i in range(0, len(data_by_coin[coin]), segment_size):
-        k_set.append(data_by_coin[coin][i:i + segment_size])
-
-    return k_set
+    # Split the data into k partitions.
+    return [data_by_coin[coin][i:i + segment_size] for i in range(0, len(data_by_coin[coin]), segment_size)]
 
 
 def split_data_coins(coin_dict, data):
-    coin_dict_over_200 = {k: v for k, v in coin_dict.items() if v >= 200}
-    # Filter out coins which are usable from the dict
-    coin_dict = {k: v for k, v in coin_dict.items() if v < 200}
-
     # Filter out unusable coins from the data
-    for coin in coin_dict.keys():
-        data = list(filter(lambda a: a[1] != coin, data))
+    data = [[p for p in data if p[1] != coin] for coin, v in coin_dict.items() if v < 200]
+    return [[p for p in data if p[1] == coin] for coin, v in coin_dict.items() if v >= 200]
 
-    data_by_coin = {}
 
-    for coin in coin_dict_over_200.keys():
-        data_by_coin[coin] = list(filter(lambda a: a[1] == coin, data))
-
-    return data_by_coin
+if __name__ == '__main__':
+    read_csv()
