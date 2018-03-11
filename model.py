@@ -1,11 +1,16 @@
 from keras.models import Sequential
-from keras.layers import LSTM, Activation, Dense
+from keras.layers import LSTM, Activation
 from keras.backend import std
+from keras.utils.generic_utils import get_custom_objects
 from tensorflow import squared_difference
 
 
-def std_difference(y_true, y_pred):
+def std_deviation(y_true, y_pred):
     return std(squared_difference(y_true, y_pred))
+
+
+def g(x):
+    return x / (1 - x)
 
 
 def create_model(input_size, layer_sizes, batch_size=None):
@@ -16,8 +21,8 @@ def create_model(input_size, layer_sizes, batch_size=None):
     for layer_size in layer_sizes:
         model.add(LSTM(layer_size, return_sequences=True))
         model.add(Activation("sigmoid"))
-    # TODO Add
-    model.compile(optimizer="rmsprop", loss="mse", metrics=[std_difference])
+    model.add(Activation(g))
+    model.compile(optimizer="rmsprop", loss="mse", metrics=[std_deviation])
     return model
 
 
@@ -42,6 +47,7 @@ def set_weights(model, weights):
         layer.set_weights(w)
 
 
+get_custom_objects().update({"damned": Activation(g)})
 if __name__ == "__main__":
     import numpy as np
     dummy = create_model(2, [2])
