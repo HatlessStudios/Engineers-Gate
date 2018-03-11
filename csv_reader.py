@@ -1,5 +1,4 @@
 import csv
-import data_grapher
 
 
 def read_csv():
@@ -41,6 +40,8 @@ def filter_data(coin_dict, data, k, coin):
     Parses the data, removing currencies with less than 200 available data,
     Separates data into categories based on the currency,
     Splits the list into two data sets - one for training, and one for testing.
+    :param k:
+    :param coin:
     :param coin_dict: Dictionary of currencies and their occurrences.
     :param data: Values from data set e.g. low/high prices.
     :return: A batch of test data, and training data.
@@ -54,9 +55,8 @@ def filter_data(coin_dict, data, k, coin):
     for i in range(0, len(data_by_coin[coin]), segment_size):
         k_set.append(data_by_coin[coin][i:i + segment_size])
 
-
-
     return k_set
+
 
 def split_data_coins(coin_dict, data):
     coin_dict_over_200 = {k: v for k, v in coin_dict.items() if v >= 200}
@@ -73,6 +73,3 @@ def split_data_coins(coin_dict, data):
         data_by_coin[coin] = list(filter(lambda a: a[1] == coin, data))
 
     return data_by_coin
-
-
-
