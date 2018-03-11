@@ -39,11 +39,11 @@ def predict_model(model, data, steps=1):
 
 
 def get_weights(model):
-    return [layer.get_weights() for layer in model.model.layers]
+    return [layer.get_weights() for layer in model.model.layers if type(layer) == LSTM]
 
 
 def set_weights(model, weights):
-    for layer, w in zip(model.model.layers, weights):
+    for layer, w in zip((layer for layer in model.model.layers if type(layer) == LSTM), weights):
         layer.set_weights(w)
 
 
