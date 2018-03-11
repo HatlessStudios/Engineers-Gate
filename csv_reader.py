@@ -2,7 +2,6 @@ import csv
 
 
 def read_csv():
-
     """
     Parse a CSV file and return the list of cryptocurrencies used,
     along with their associated data.
@@ -15,6 +14,7 @@ def read_csv():
         coin_dict = {}
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
 
+        reader.__next__()
         # Read each row in the csv
         for row in reader:
             data.append(row)
@@ -30,29 +30,22 @@ def read_csv():
     return coin_dict, data
 
 
-def filter_data(coin_dict, data, k, coin):
-
+def split_data(coin_data, k):
     """
-    Parses the data, removing currencies with less than 200 available data,
-    Separates data into categories based on the currency,
     Splits the list into two data sets - one for training, and one for testing.
     :param k:
-    :param coin:
-    :param coin_dict: Dictionary of currencies and their occurrences.
-    :param data: Values from data set e.g. low/high prices.
+    :param coin_data: List of coins mapping to data as returned by split_data_coins.
     :return: A batch of test data, and training data.
     """
 
-    data_by_coin = split_data_coins(coin_dict, data)
-    segment_size = len(data_by_coin[coin]) // k
-    # Split the data into k partitions.
-    return [data_by_coin[coin][i:i + segment_size] for i in range(0, len(data_by_coin[coin]), segment_size)]
+    segment_size = len(coin_data) // k
+    return [coin_data[i:i + segment_size] for i in range(0, len(coin_data), segment_size)]
 
 
 def split_data_coins(coin_dict, data):
     # Filter out unusable coins from the data
-    data = [[p for p in data if p[1] != coin] for coin, v in coin_dict.items() if v < 200]
-    return [[p for p in data if p[1] == coin] for coin, v in coin_dict.items() if v >= 200]
+    data = [p for p in data if coin_dict[p[1]] >= 200]
+    return {coin: [p for p in data if p[1] == coin] for coin, v in coin_dict.items()}
 
 
 if __name__ == '__main__':
