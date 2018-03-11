@@ -10,10 +10,13 @@ def std_difference(y_true, y_pred):
 
 def create_model(input_size, layer_sizes, batch_size=None):
     model = Sequential()
-    model.add(Dense(input_size, input_shape=(batch_size, input_size)))
+    layer_sizes = layer_sizes.__iter__()
+    model.add(LSTM(layer_sizes.__next__(), input_shape=(batch_size, input_size), return_sequences=True))
+    model.add(Activation("sigmoid"))
     for layer_size in layer_sizes:
-        model.add(LSTM(layer_size))
+        model.add(LSTM(layer_size, return_sequences=True))
         model.add(Activation("sigmoid"))
+    # TODO Add
     model.compile(optimizer="rmsprop", loss="mse", metrics=[std_difference])
     return model
 
@@ -37,3 +40,9 @@ def get_weights(model):
 def set_weights(model, weights):
     for layer, w in zip(model.model.layers, weights):
         layer.set_weights(w)
+
+
+if __name__ == "__main__":
+    import numpy as np
+    dummy = create_model(2, [2])
+    dummy_result = test_model(dummy, np.array([[[0, 0], [0, 0]]]), np.array([[[0, 1], [2, 4]]]))
