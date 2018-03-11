@@ -38,8 +38,8 @@ def split_data(coin_data, k):
     :return: A batch of test data, and training data.
     """
 
-    segment_size = len(coin_data) // k
-    return [coin_data[i:i + segment_size] for i in range(0, len(coin_data), segment_size)]
+    segment_size = len(coin_data) // (k + 1)
+    return [coin_data[i:i + segment_size] for i in range(0, len(coin_data), segment_size)][:k]
 
 
 def split_data_coins(coin_dict, data):
