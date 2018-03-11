@@ -58,9 +58,9 @@ def model_currency(k=10):
     coin_dict, data = cr.read_csv()
 
     data = cr.split_data_coins(coin_dict, data)
-    coin = select_currency(coin_dict)
+    coin = select_currency(data)
     data = data[coin]
-    
+
     model_weights = []
     model_errors = []
 
